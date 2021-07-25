@@ -9,9 +9,14 @@ const torneoSchema = mongoose.Schema({
     name: String,
     lugar: String,
     selectedFile: String,
+    iniciado: { type: Boolean, default: false },
     comentarios: { type: [String], default: [] },
-    likes: [{ type: Schema.Types.ObjectId, ref: 'User'}],
-    asistentes: [{ type: Schema.Types.ObjectId, ref: 'User'}],
+    likes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    rondas: [Object],
+    puntuacion: { 
+        jugador: {type: String},
+        puntos: {type: Number}
+    },
     fecha: {
         type: Date,
         default: new Date()

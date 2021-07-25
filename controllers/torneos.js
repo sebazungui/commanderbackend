@@ -49,13 +49,11 @@ export const getTorneo = async (req, res) => {
     try {
         const torneo = await TorneoAbierto.findById(id).populate({
             path: 'likes',
-            select: 'name -_id'
+            select: 'name _id'
         }).exec(function (err, torneo) {
-            
             res.status(200).json(torneo);
         });
 
-        // res.status(200).json(torneo);
     } catch (error) {
         res.status(404).json({ message: error.message });
     }
@@ -89,18 +87,24 @@ export const updateTorneo = async (req, res) => {
     res.json(updatedTorneo);
 }
 
-export const inscribirse = async (req, res) => {
+export const iniciarTorneo = async (req, res) => {
     const { id } = req.params;
-    const { title, detalle, creator, selectedFile, lugares, jugadores } = req.body;
+    const { rondas } = req.body;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No torneo with id: ${id}`);
+    const torneo = await TorneoAbierto.findById(id);
 
-    const updatedTorneo = { creator, title, detalle, lugares, jugadores, selectedFile, _id: id };
+    // const rondasNew = JSON.stringify(rondas);
+    // torneo.rondas.push(rondas);
+    // const iniciado = true;
 
-    await TorneoAbierto.findByIdAndUpdate(id, updatedTorneo, { new: true });
+    // const updatedTorneo = await TorneoAbierto.findByIdAndUpdate(id, torneo, { new: true });
+    const updatedTorneo2 = await TorneoAbierto.findByIdAndUpdate(id, rondas);
 
-    res.json(updatedTorneo);
+    // res.json(updatedTorneo);
+    res.json(updatedTorneo2);
 }
+
+
 
 export const agregarJugador = async (req, res) => {
     const { id } = req.params;
@@ -137,7 +141,7 @@ export const likeTorneo = async (req, res) => {
     res.status(200).json(updatedTorneo);
 }
 
-export const inscribirJugador = async (req, res) => {
+export const comentar = async (req, res) => {
     const { id } = req.params;
     const { value } = req.body;
 
@@ -150,7 +154,16 @@ export const inscribirJugador = async (req, res) => {
 }
 
 export const participar = async (req, res) => {
+    const { id } = req.params;
+    const { asistentes } = req.body;
 
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No torneo with id: ${id}`);
+
+    const updatedTorneo = { asistentes, _id: id };
+
+    await TorneoAbierto.findByIdAndUpdate(id, updatedTorneo, { new: true });
+
+    res.json(updatedTorneo);
 }
 
 export default router;
